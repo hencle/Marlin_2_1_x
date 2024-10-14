@@ -125,10 +125,10 @@
 #endif
 #ifndef Z_STOP_PIN
   #ifndef Z_MIN_PIN
-    #define Z_MIN_PIN                         18  // Z-
+    #define Z_MIN_PIN                         11  // Reassigned to AUX1-Pin3 from 18 (D57) hcl
   #endif
   #ifndef Z_MAX_PIN
-    #define Z_MAX_PIN                         19  // Z+
+    #define Z_MAX_PIN                         6  // Reassigned to AUX1-Pin4 from 19 (D58y) hcl
   #endif
 #endif
 
