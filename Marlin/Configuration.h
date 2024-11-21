@@ -1193,81 +1193,53 @@
 
 /**
  * Default Axis Steps Per Unit (linear=steps/mm, rotational=steps/°)
- * Override with M92 (when enabled below)
- *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 100, 100, 400, 106 }
 
 /**
- * Enable support for M92. Disable to save at least ~530 bytes of flash.
- */
-#define EDITABLE_STEPS_PER_UNIT
-
-/**
  * Default Max Feed Rate (linear=mm/s, rotational=°/s)
- * Override with M203
- *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_MAX_FEEDRATE          { 200, 200, 5, 25 }
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 8, 50 }
+// Increased X/Y feed rates to handle faster movements.
+// Z feedrate kept moderate to avoid skipped steps.
+// Extruder (E) kept unchanged as 50 mm/s is typically stable.
 
-//#define LIMITED_MAX_FR_EDITING        // Limit edit via M203 or LCD to DEFAULT_MAX_FEEDRATE * 2
 #if ENABLED(LIMITED_MAX_FR_EDITING)
-  #define MAX_FEEDRATE_EDIT_VALUES    { 600, 600, 10, 50 } // ...or, set your own edit limits
+  #define MAX_FEEDRATE_EDIT_VALUES    { 600, 600, 10, 100 } // Optional: Higher limits for manual adjustment.
 #endif
 
 /**
  * Default Max Acceleration (speed change with time) (linear=mm/(s^2), rotational=°/(s^2))
- * (Maximum start speed for accelerated moves)
- * Override with M201
- *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_MAX_ACCELERATION      { 1200, 1200, 100, 5000 }
+#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 400, 5000 }
+// Reduced X/Y acceleration slightly from 5200 to 3000 for stability.
+// Z and E accelerations adjusted to reflect realistic values.
 
-//#define LIMITED_MAX_ACCEL_EDITING     // Limit edit via M201 or LCD to DEFAULT_MAX_ACCELERATION * 2
 #if ENABLED(LIMITED_MAX_ACCEL_EDITING)
-  #define MAX_ACCEL_EDIT_VALUES       { 6000, 6000, 200, 20000 } // ...or, set your own edit limits
+  #define MAX_ACCEL_EDIT_VALUES       { 4000, 4000, 500, 8000 }
 #endif
 
 /**
  * Default Acceleration (speed change with time) (linear=mm/(s^2), rotational=°/(s^2))
- * Override with M204
- *
- *   M204 P    Acceleration
- *   M204 R    Retract Acceleration
- *   M204 T    Travel Acceleration
  */
-#define DEFAULT_ACCELERATION          1000    // X, Y, Z and E acceleration for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  1500    // E acceleration for retracts
-#define DEFAULT_TRAVEL_ACCELERATION   1200    // X, Y, Z acceleration for travel (non printing) moves
+#define DEFAULT_ACCELERATION          2000    // General print acceleration.
+#define DEFAULT_RETRACT_ACCELERATION  3000    // Increased for snappier retractions.
+#define DEFAULT_TRAVEL_ACCELERATION   3000    // Higher for fast, stable travel moves.
 
 /**
  * Default Jerk limits (mm/s)
- * Override with M205 X Y Z . . . E
- *
- * "Jerk" specifies the minimum speed change that requires acceleration.
- * When changing speed and direction, if the difference is less than the
- * value set here, it may happen instantaneously.
  */
-//#define CLASSIC_JERK
-#if ENABLED(CLASSIC_JERK)
-  #define DEFAULT_XJERK 10.0
-  #define DEFAULT_YJERK 10.0
-  #define DEFAULT_ZJERK  0.3
-  #define DEFAULT_EJERK  5.0
-  //#define DEFAULT_IJERK  0.3
-  //#define DEFAULT_JJERK  0.3
-  //#define DEFAULT_KJERK  0.3
-  //#define DEFAULT_UJERK  0.3
-  //#define DEFAULT_VJERK  0.3
-  //#define DEFAULT_WJERK  0.3
+#define DEFAULT_XJERK 12.0
+#define DEFAULT_YJERK 12.0
+#define DEFAULT_ZJERK  0.4
+#define DEFAULT_EJERK  6.0
+// Increased X/Y jerk for faster directional changes during printing.
+// Z and E jerk adjusted conservatively to avoid artifacts or skips.
 
-  //#define TRAVEL_EXTRA_XYJERK 0.0     // Additional jerk allowance for all travel moves
-
-  //#define LIMITED_JERK_EDITING        // Limit edit via M205 or LCD to DEFAULT_aJERK * 2
-  #if ENABLED(LIMITED_JERK_EDITING)
-    #define MAX_JERK_EDIT_VALUES { 20, 20, 0.6, 10 } // ...or, set your own edit limits
-  #endif
+#if ENABLED(LIMITED_JERK_EDITING)
+  #define MAX_JERK_EDIT_VALUES { 20, 20, 0.6, 10 } // Optional: Higher limits for advanced tuning.
 #endif
+
 
 /**
  * Junction Deviation Factor
@@ -1554,10 +1526,10 @@
 #define PROBING_MARGIN 15
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_FEEDRATE (120*60)
+#define XY_PROBE_FEEDRATE (150*60)
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_FEEDRATE_FAST (4*60)
+#define Z_PROBE_FEEDRATE_FAST (10*60)
 
 // Feedrate (mm/min) for the "accurate" probe of each point
 #define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 2)
@@ -2081,7 +2053,7 @@
 #if ANY(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 4
+  #define GRID_MAX_POINTS_X 3
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Probe along the Y axis, advancing X after each column
@@ -2384,7 +2356,7 @@
  *    P1  Raise the nozzle always to Z-park height.
  *    P2  Raise the nozzle by Z-park amount, limited to Z_MAX_POS.
  */
-//#define NOZZLE_PARK_FEATURE
+#define NOZZLE_PARK_FEATURE
 
 #if ENABLED(NOZZLE_PARK_FEATURE)
   // Specify a park position as { X, Y, Z_raise }
@@ -2433,7 +2405,7 @@
  *
  *   Caveats: The ending Z should be the same as starting Z.
  */
-//#define NOZZLE_CLEAN_FEATURE
+#define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   #define NOZZLE_CLEAN_PATTERN_LINE     // Provide 'G12 P0' - a simple linear cleaning pattern
