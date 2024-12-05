@@ -1211,7 +1211,7 @@
 /**
  * Default Max Acceleration (speed change with time) (linear=mm/(s^2), rotational=°/(s^2))
  */
-#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 400, 5000 }
+#define DEFAULT_MAX_ACCELERATION      { 2000, 2000, 500, 4500 }
 // Reduced X/Y acceleration slightly from 5200 to 3000 for stability.
 // Z and E accelerations adjusted to reflect realistic values.
 
@@ -1223,18 +1223,20 @@
  * Default Acceleration (speed change with time) (linear=mm/(s^2), rotational=°/(s^2))
  */
 #define DEFAULT_ACCELERATION          2000    // General print acceleration.
-#define DEFAULT_RETRACT_ACCELERATION  3000    // Increased for snappier retractions.
-#define DEFAULT_TRAVEL_ACCELERATION   3000    // Higher for fast, stable travel moves.
+#define DEFAULT_RETRACT_ACCELERATION  2000    // Increased for snappier retractions.
+#define DEFAULT_TRAVEL_ACCELERATION   2000    // Higher for fast, stable travel moves.
 
 /**
  * Default Jerk limits (mm/s)
  */
-#define DEFAULT_XJERK 12.0
-#define DEFAULT_YJERK 12.0
-#define DEFAULT_ZJERK  0.4
-#define DEFAULT_EJERK  6.0
-// Increased X/Y jerk for faster directional changes during printing.
-// Z and E jerk adjusted conservatively to avoid artifacts or skips.
+/**
+ * Default Jerk limits (mm/s)
+ */
+#define DEFAULT_XJERK 10.0  // Default X-axis jerk
+#define DEFAULT_YJERK 10.0  // Default Y-axis jerk
+#define DEFAULT_ZJERK 0.4   // Default Z-axis jerk
+#define DEFAULT_EJERK 5.0   // Default extruder jerk
+
 
 #if ENABLED(LIMITED_JERK_EDITING)
   #define MAX_JERK_EDIT_VALUES { 20, 20, 0.6, 10 } // Optional: Higher limits for advanced tuning.
@@ -1600,7 +1602,7 @@
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // (mm) Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // (mm) Z Clearance between multiple probes
 #define Z_PROBE_ERROR_TOLERANCE     3 // (mm) Tolerance for early trigger (<= -probe.offset.z + ZPET)
-//#define Z_AFTER_PROBING           5 // (mm) Z position after probing is done
+#define Z_AFTER_PROBING           10 // (mm) Z position after probing is done
 
 #define Z_PROBE_LOW_POINT          -2 // (mm) Farthest distance below the trigger-point to go before stopping
 
@@ -1641,8 +1643,8 @@
 // Require minimum nozzle and/or bed temperature for probing
 #define PREHEAT_BEFORE_PROBING //hcl 
 #if ENABLED(PREHEAT_BEFORE_PROBING)
-  #define PROBING_NOZZLE_TEMP 120   // (°C) Only applies to E0 at this time
-  #define PROBING_BED_TEMP     50
+  #define PROBING_NOZZLE_TEMP 180   // (°C) Only applies to E0 at this time
+  #define PROBING_BED_TEMP     60
 #endif
 
 // @section stepper drivers
@@ -1837,8 +1839,8 @@
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
-
-  #define FIL_RUNOUT_STATE     LOW        // Pin state indicating that filament is NOT present.
+  #define FIL_RUNOUT_PIN 4
+  #define FIL_RUNOUT_STATE     HIGH        // Pin state indicating that filament is NOT present.
   #define FIL_RUNOUT_PULLUP               // Use internal pullup for filament runout pins.
   //#define FIL_RUNOUT_PULLDOWN           // Use internal pulldown for filament runout pins.
   //#define WATCH_ALL_RUNOUT_SENSORS      // Execute runout script on any triggering sensor, not only for the active extruder.
@@ -2053,7 +2055,7 @@
 #if ANY(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 3
+  #define GRID_MAX_POINTS_X 4
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Probe along the Y axis, advancing X after each column
@@ -2209,9 +2211,9 @@
 #define Z_SAFE_HOMING //hcl
 
 #if ENABLED(Z_SAFE_HOMING)
-  #define Z_SAFE_HOMING_X_POINT 53  // (mm) X point for Z homing
-  #define Z_SAFE_HOMING_Y_POINT 90  // (mm) Y point for Z homing
-  //#define Z_SAFE_HOMING_POINT_ABSOLUTE  // Ignore home offsets (M206) for Z homing position
+  #define Z_SAFE_HOMING_X_POINT (X_BED_SIZE / 2)
+  #define Z_SAFE_HOMING_Y_POINT (Y_BED_SIZE / 2)
+  //#define Z_SAFE_HOMING_POINT_ABSOLUTE  // Optional: Ignore home offsets (M206) for Z homing position
 #endif
 
 // Homing speeds (linear=mm/min, rotational=°/min)
@@ -2298,7 +2300,7 @@
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save flash.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
 #if ENABLED(EEPROM_SETTINGS)
-  //#define EEPROM_AUTO_INIT  // Init EEPROM automatically on any errors.
+  #define EEPROM_AUTO_INIT  // Init EEPROM automatically on any errors.
   //#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build.
 #endif
 
@@ -2492,7 +2494,7 @@
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER
+#define PRINTCOUNTER
 #if ENABLED(PRINTCOUNTER)
   #define PRINTCOUNTER_SAVE_INTERVAL 60 // (minutes) EEPROM save interval during print. A value of 0 will save stats at end of print.
 #endif
